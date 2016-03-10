@@ -52,6 +52,7 @@ public class LoginScreen extends AppCompatActivity {
 
     private void Test() {
         String bla = "test";
+        String blabla = "test2";
     }
 
 
