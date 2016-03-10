@@ -32,7 +32,6 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
         btn_login.setOnClickListener(this);
     }
 
-
     @Override
     public void onClick(View v) {
         if((username.getText().toString().equals("Margita")) && (password.getText().toString().equals("Ziguli")))  {
