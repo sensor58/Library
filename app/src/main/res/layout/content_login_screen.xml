@@ -8,12 +8,82 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/gray"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="fiit.mtaa.library.LoginScreen"
     tools:showIn="@layout/activity_login_screen">
 
     <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Log in to Library"
+        android:textColor="@color/white"
+        android:textSize="42dp"
+        android:textStyle="bold"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="62dp"
+        android:id="@+id/textView" />
+
+    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:id="@+id/username"
+        android:layout_below="@+id/textView"
+        android:layout_alignStart="@+id/textView"
+        android:layout_marginTop="36dp"
+        android:layout_alignEnd="@+id/textView"
+        android:textColor="@color/white"
+        android:drawableLeft="@drawable/ic_person"
+        android:background="#383838"
+        android:textSize="22sp"
+        android:editable="true"
+        android:clickable="true"
+        android:layout_marginBottom="400dp"
+        android:visibility="visible"
+        android:enabled="true"
+        android:minHeight="40dp"
+        android:hint="Username"
+        android:textColorHint="@color/light_gray" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/password"
+        android:layout_marginTop="52dp"
+        android:autoText="false"
+        android:textColor="@color/white"
+        android:drawableLeft="@drawable/ic_lock"
+        android:background="#383838"
+        android:singleLine="false"
+        android:textSize="22sp"
+        android:editable="true"
+        android:clickable="true"
+        android:layout_alignTop="@+id/username"
+        android:layout_alignStart="@+id/username"
+        android:layout_alignEnd="@+id/username"
+        android:layout_marginBottom="390dp"
+        android:visibility="visible"
+        android:enabled="true"
+        android:minHeight="40dp"
+        android:hint="Password"
+        android:textColorHint="@color/light_gray"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LOG IN"
+        android:id="@+id/btn_login"
+        android:layout_alignTop="@+id/password"
+        android:layout_alignStart="@+id/password"
+        android:layout_marginTop="51dp"
+        android:layout_alignEnd="@+id/password"
+        android:background="#64B5F6"
+        android:textColor="#ffffff"
+        android:textSize="22sp" />
+
 </RelativeLayout>
