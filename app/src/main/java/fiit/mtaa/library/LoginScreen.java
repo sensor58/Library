@@ -49,4 +49,10 @@ public class LoginScreen extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void Test() {
+        String bla = "test";
+    }
+
+
 }
