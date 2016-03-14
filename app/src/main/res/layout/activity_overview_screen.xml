@@ -27,6 +27,17 @@
                 android:layout_gravity="center"
                 android:id="@+id/toolbar_title"
                 android:textSize="32dp" />
+
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_gravity="right"
+                android:background="#64b5f6"
+                android:clickable="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_lock"
+                android:focusableInTouchMode="false" />
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

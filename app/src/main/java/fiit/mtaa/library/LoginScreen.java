@@ -34,7 +34,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        if((username.getText().toString().equals("Margita")) && (password.getText().toString().equals("Ziguli")))  {
+        if((username.getText().toString().equals("m")) && (password.getText().toString().equals("z")))  {
             startActivity(new Intent(this, OverviewScreen.class));
         }
         else {

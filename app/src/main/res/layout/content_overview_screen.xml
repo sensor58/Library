@@ -12,4 +12,11 @@
     tools:context="fiit.mtaa.library.OverviewScreen"
     tools:showIn="@layout/activity_overview_screen">
 
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/Texthttp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>
