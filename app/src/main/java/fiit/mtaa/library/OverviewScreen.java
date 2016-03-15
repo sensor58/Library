@@ -83,8 +83,9 @@ public class OverviewScreen extends AppCompatActivity {
 
         Wrapper wrapper = gson.fromJson(jsonString, Wrapper.class);
 
-        httptext.append(wrapper.data[0].getTitle());
-       // httptext.append(book.getTitle());
+        for(int i = 0; i < wrapper.data.length; i++) {
+            httptext.append(wrapper.data[i].getTitle());
+        }
     }
 
     public class Wrapper {
