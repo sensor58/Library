@@ -48,8 +48,8 @@ public class OverviewScreen extends AppCompatActivity {
             OkHttpClient client = new OkHttpClient();
 
                 Request request = new Request.Builder()
-                    //    .url("https://api.backendless.com/v1/data/Books")
-                        .url("https://api.backendless.com/v1/data/Books/2D36510A-45A0-9EB0-FF86-F71D935ADC00")
+                        .url("https://api.backendless.com/v1/data/Books")
+                    //    .url("https://api.backendless.com/v1/data/Books/2D36510A-45A0-9EB0-FF86-F71D935ADC00")
                         .header("application-id", "36E0E8DE-E56C-9A69-FFE7-9CE128693F00")
                         .addHeader("secret-key", "B1E5E7AC-907F-5A89-FFBB-AC7482E0E600")
                         .build();
@@ -81,8 +81,15 @@ public class OverviewScreen extends AppCompatActivity {
     private void parseJson(String jsonString) {
         Gson gson = new Gson();
 
-        Book book = gson.fromJson(jsonString, Book.class);
-        httptext.append(book.getTitle());
+        Wrapper wrapper = gson.fromJson(jsonString, Wrapper.class);
+
+        httptext.append(wrapper.data[0].getTitle());
+       // httptext.append(book.getTitle());
+    }
+
+    public class Wrapper {
+        int offset = 0;
+        Book[] data = null;
     }
 
 }
