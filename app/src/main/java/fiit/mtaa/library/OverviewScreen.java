@@ -2,16 +2,7 @@ package fiit.mtaa.library;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.google.gson.*;
@@ -20,23 +11,25 @@ import com.google.gson.reflect.TypeToken;
 import okhttp3.*;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 
 public class OverviewScreen extends AppCompatActivity {
 
+    private ArrayList<Book> books = new ArrayList<Book>();
+    //EditText httptext;
     private ListView listView;
-    private ArrayList<String> dataItems = new ArrayList<String>();
-    EditText httptext;
+
+    ListBooksAdapter listBooksAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview_screen);
-        httptext = (EditText) findViewById(R.id.Texthttp);
+
+        listView = (ListView) findViewById(R.id.listBooks);
 
         new TestMain().execute("nic");
     }
@@ -84,8 +77,10 @@ public class OverviewScreen extends AppCompatActivity {
         Wrapper wrapper = gson.fromJson(jsonString, Wrapper.class);
 
         for(int i = 0; i < wrapper.data.length; i++) {
-            httptext.append(wrapper.data[i].getTitle());
+            books.add(wrapper.data[i]);
         }
+
+        listView.setAdapter(new ListBooksAdapter(this, books));
     }
 
     public class Wrapper {

@@ -29,6 +29,7 @@
                 android:textSize="32dp" />
 
             <ImageButton
+                android:id="@+id/toolbarButton"
                 android:layout_width="40dp"
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
@@ -37,7 +38,9 @@
                 android:clickable="true"
                 android:scaleType="fitXY"
                 android:src="@drawable/ic_lock"
-                android:focusableInTouchMode="false" />
+                android:focusableInTouchMode="false"
+                />
+
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

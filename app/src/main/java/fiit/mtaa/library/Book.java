@@ -1,26 +1,49 @@
 package fiit.mtaa.library;
 
+import android.util.EventLogTags;
+
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 public class Book implements Serializable {
-    public int year = 0;
-
     public int getYear() {
         return year;
     }
 
-    public void setYear(int year) {
-        this.year = year;
-    }
+    public void setYear(int year) { this.year = year; }
 
     public int getAuthor() {
         return author;
     }
 
-    public void setAuthor(int author) {
-        this.author = author;
+    public void setAuthor(int author) { this.author = author; }
+
+    public String getAuthorName(int num) {
+        switch(num) {
+            case 1:
+                return "Dan Brown";
+            case 2:
+                return "Wiliam Shakespeare";
+            case 3:
+                return "Jo Nesbo";
+            case 4:
+                return "Dominik Dan";
+            case 5:
+                return "Martin Kukucin";
+            case 6:
+                return "Margita Figuli";
+            case 7:
+                return "Johann Wolfgang von Goethe";
+            case 8:
+                return "Nicholas Sparks";
+            case 9:
+                return "Christian Morgenstern";
+            case 10:
+                return "Dusan Dusek";
+        }
+        return null;
     }
 
     public String getIsbn() {
@@ -96,6 +119,7 @@ public class Book implements Serializable {
     }
 
     public int author = 0;
+    public int year = 0;
     public String isbn = null;
     public int language = 0;
     public String title = null;
@@ -106,5 +130,41 @@ public class Book implements Serializable {
     public String publisher = null;
     public String objectId = null;
 
+    /*public enum Author {
+        DBrown(1),
+        WShakespeare(2),
+        JNesbo(3),
+        DDan(4),
+        MKukucin(5),
+        MFiguli(6),
+        JGoethe(7),
+        NSparks(8),
+        CMorgenstern(9),
+        DDusek(10);
 
+        private final int value;
+
+        Author(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return this.value;
+        }
+
+        DBrown("Dan Brown"),
+        WShakespeare("Wiliam Shakespeare"),
+        JNesbo("Jo Nesbo"),
+        DDan("Dominik Dan"),
+        MKukucin("Martin Kukucin"),
+        MFiguli("Margita Figuli"),
+        JGoethe("Johann Goethe"),
+        NSparks("Nicholas Sparks"),
+        CMorgenstern("Christian Morgenstern"),
+        DDusek("Dusan Dusek");
+
+
+        @Override public String toString() { return displayAuthor; }
+    }*/
 }
+
