@@ -4,7 +4,10 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:padding="5dip">
+    android:padding="5dip"
+    android:clickable="false"
+    android:focusable="false"
+    android:descendantFocusability="blocksDescendants">
 
     <TextView
         android:textAppearance="?android:attr/textAppearanceLarge"

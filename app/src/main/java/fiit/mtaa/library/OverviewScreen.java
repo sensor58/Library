@@ -1,8 +1,14 @@
 package fiit.mtaa.library;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.gson.*;
@@ -22,7 +28,7 @@ public class OverviewScreen extends AppCompatActivity {
     //EditText httptext;
     private ListView listView;
 
-    ListBooksAdapter listBooksAdapter;
+    private ListBooksAdapter listBooksAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +48,6 @@ public class OverviewScreen extends AppCompatActivity {
 
                 Request request = new Request.Builder()
                         .url("https://api.backendless.com/v1/data/Books")
-                    //    .url("https://api.backendless.com/v1/data/Books/2D36510A-45A0-9EB0-FF86-F71D935ADC00")
                         .header("application-id", "36E0E8DE-E56C-9A69-FFE7-9CE128693F00")
                         .addHeader("secret-key", "B1E5E7AC-907F-5A89-FFBB-AC7482E0E600")
                         .build();
@@ -73,14 +78,25 @@ public class OverviewScreen extends AppCompatActivity {
 
     private void parseJson(String jsonString) {
         Gson gson = new Gson();
-
         Wrapper wrapper = gson.fromJson(jsonString, Wrapper.class);
+
+
 
         for(int i = 0; i < wrapper.data.length; i++) {
             books.add(wrapper.data[i]);
         }
 
         listView.setAdapter(new ListBooksAdapter(this, books));
+        listView.setOnItemClickListener(new ListClickHandler());
+
+    }
+
+    public class ListClickHandler implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Intent intent = new Intent(OverviewScreen.this, DetailScreen.class);
+            startActivity(intent);
+        }
     }
 
     public class Wrapper {
