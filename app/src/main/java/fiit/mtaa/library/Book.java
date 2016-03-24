@@ -14,11 +14,11 @@ public class Book implements Serializable {
 
     public void setYear(int year) { this.year = year; }
 
-    public int getAuthor() {
+    public Author getAuthor() {
         return author;
     }
 
-    public void setAuthor(int author) { this.author = author; }
+    public void setAuthor(Author author) { this.author = author; }
 
     public String getAuthorName(int num) {
         switch(num) {
@@ -54,11 +54,11 @@ public class Book implements Serializable {
         this.isbn = isbn;
     }
 
-    public int getLanguage() {
+    public Language getLanguage() {
         return language;
     }
 
-    public void setLanguage(int language) {
+    public void setLanguage(Language language) {
         this.language = language;
     }
 
@@ -78,11 +78,11 @@ public class Book implements Serializable {
         this.picture = picture;
     }
 
-    public int getLiteraryForm() {
+    public LiteraryForm getLiteraryForm() {
         return literaryForm;
     }
 
-    public void setLiteraryForm(int literaryForm) {
+    public void setLiteraryForm(LiteraryForm literaryForm) {
         this.literaryForm = literaryForm;
     }
 
@@ -118,29 +118,29 @@ public class Book implements Serializable {
         this.objectId = objectId;
     }
 
-    public int author = 0;
+    public Author author = null;
     public int year = 0;
     public String isbn = null;
-    public int language = 0;
+    public Language language = null;
     public String title = null;
     public String picture = null;
-    public int literaryForm = 0;
+    public LiteraryForm literaryForm = null;
     public double price = 0;
     public int paperback = 0;
     public String publisher = null;
     public String objectId = null;
 
-    /*public enum Author {
-        DBrown(1),
-        WShakespeare(2),
-        JNesbo(3),
-        DDan(4),
-        MKukucin(5),
-        MFiguli(6),
-        JGoethe(7),
-        NSparks(8),
-        CMorgenstern(9),
-        DDusek(10);
+    public enum Author {
+        Dan_Brown(1),
+        Wiliam_Shakespeare(2),
+        Jo_Nesbo(3),
+        Dominik_Dan(4),
+        Martin_Kukucin(5),
+        Margita_Figuli(6),
+        Johann_Wolfgang_von_Goethe(7),
+        Nicholas_Sparks(8),
+        Christian_Morgenstern(9),
+        Dusan_Dusek(10);
 
         private final int value;
 
@@ -152,19 +152,66 @@ public class Book implements Serializable {
             return this.value;
         }
 
-        DBrown("Dan Brown"),
-        WShakespeare("Wiliam Shakespeare"),
-        JNesbo("Jo Nesbo"),
-        DDan("Dominik Dan"),
-        MKukucin("Martin Kukucin"),
-        MFiguli("Margita Figuli"),
-        JGoethe("Johann Goethe"),
-        NSparks("Nicholas Sparks"),
-        CMorgenstern("Christian Morgenstern"),
-        DDusek("Dusan Dusek");
+        public static Author fromValue(int value) {
+            for (Author author : Author.values()) {
+                if (author.getValue() == value) {
+                    return author;
+                }
+            }
+            return null;
+        }
 
+        @Override public String toString() { return this.name().replace("_", " "); }
+    }
 
-        @Override public String toString() { return displayAuthor; }
-    }*/
+    public enum LiteraryForm {
+        Poetry(1),
+        Prose(2),
+        Drama(3);
+
+        private final int value;
+
+        LiteraryForm(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return this.value;
+        }
+
+        public static LiteraryForm fromValue(int value) {
+            for (LiteraryForm literaryForm : LiteraryForm.values()) {
+                if (literaryForm.getValue() == value) {
+                    return literaryForm;
+                }
+            }
+            return null;
+        }
+    }
+
+    public enum Language {
+        English(1),
+        Slovak(2),
+        German(3);
+
+        private final int value;
+
+        Language(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return this.value;
+        }
+
+        public static Language fromValue(int value) {
+            for (Language language : Language.values()) {
+                if (language.getValue() == value) {
+                    return language;
+                }
+            }
+            return null;
+        }
+    }
 }
 

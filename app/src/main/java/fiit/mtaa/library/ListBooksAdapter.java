@@ -59,7 +59,7 @@ public class ListBooksAdapter extends ArrayAdapter<Book> {
         TextView textView = (TextView) vi.findViewById(R.id.txtTitle);
         TextView subtextView = (TextView) vi.findViewById(R.id.txtSubTitle);
 
-        textView.setText(book.getAuthorName(book.getAuthor()));
+        textView.setText(book.getAuthor().toString());
         subtextView.setText(book.getTitle());
 
         return vi;

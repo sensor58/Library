@@ -77,10 +77,12 @@ public class OverviewScreen extends AppCompatActivity {
     }
 
     private void parseJson(String jsonString) {
-        Gson gson = new Gson();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Book.Author.class, new AuthorDeserializer());
+        gsonBuilder.registerTypeAdapter(Book.LiteraryForm.class, new LiteraryFormDeserializer());
+        gsonBuilder.registerTypeAdapter(Book.Language.class, new LanguageDeserializer());
+        Gson gson = gsonBuilder.create();
         Wrapper wrapper = gson.fromJson(jsonString, Wrapper.class);
-
-
 
         for(int i = 0; i < wrapper.data.length; i++) {
             books.add(wrapper.data[i]);
@@ -96,6 +98,30 @@ public class OverviewScreen extends AppCompatActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Intent intent = new Intent(OverviewScreen.this, DetailScreen.class);
             startActivity(intent);
+        }
+    }
+
+    public class AuthorDeserializer implements JsonDeserializer<Book.Author> {
+        @Override
+        public Book.Author deserialize(JsonElement element, Type arg1, JsonDeserializationContext arg2) throws JsonParseException {
+            int value = element.getAsInt();
+            return Book.Author.fromValue(value);
+        }
+    }
+
+    public class LiteraryFormDeserializer implements JsonDeserializer<Book.LiteraryForm> {
+        @Override
+        public Book.LiteraryForm deserialize(JsonElement element, Type arg1, JsonDeserializationContext arg2) throws JsonParseException {
+            int value = element.getAsInt();
+            return Book.LiteraryForm.fromValue(value);
+        }
+    }
+
+    public class LanguageDeserializer implements JsonDeserializer<Book.Language> {
+        @Override
+        public Book.Language deserialize(JsonElement element, Type arg1, JsonDeserializationContext arg2) throws JsonParseException {
+            int value = element.getAsInt();
+            return Book.Language.fromValue(value);
         }
     }
 
