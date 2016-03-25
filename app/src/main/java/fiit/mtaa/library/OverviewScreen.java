@@ -2,11 +2,13 @@ package fiit.mtaa.library;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -25,7 +27,7 @@ import java.util.List;
 public class OverviewScreen extends AppCompatActivity {
 
     private ArrayList<Book> books = new ArrayList<Book>();
-    //EditText httptext;
+    private ProgressDialog pDialog;
     private ListView listView;
 
     private ListBooksAdapter listBooksAdapter;
@@ -37,7 +39,11 @@ public class OverviewScreen extends AppCompatActivity {
 
         listView = (ListView) findViewById(R.id.listBooks);
 
-        new TestMain().execute("nic");
+        pDialog = new ProgressDialog(OverviewScreen.this);
+        pDialog.setMessage("Loading Content ...");
+        pDialog.show();
+
+        new TestMain().execute("");
     }
 
     public class TestMain extends AsyncTask<String, Integer, String> {
@@ -71,6 +77,7 @@ public class OverviewScreen extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
+            pDialog.dismiss();
 
             parseJson(result);
         }
@@ -97,6 +104,14 @@ public class OverviewScreen extends AppCompatActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Intent intent = new Intent(OverviewScreen.this, DetailScreen.class);
+            Bundle bundle = new Bundle();
+
+            Book selectedBook = (Book) parent.getItemAtPosition(position);          //ziskanie objektu vybranej knihy
+            String objectId = selectedBook.getObjectId();                           //zistenie ID knihy
+
+            bundle.putString("objectId", objectId);               //pridanie ID ako argumentu
+            intent.putExtras(bundle);
+
             startActivity(intent);
         }
     }
