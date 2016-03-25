@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="fiit.mtaa.library.DetailScreen">
+    tools:context="fiit.mtaa.library.PictureDetail">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -19,32 +19,32 @@
             android:background="#64b5f6"
             app:popupTheme="@style/AppTheme.PopupOverlay" >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Detail"
-            android:textColor="@color/white"
-            android:layout_gravity="center"
-            android:id="@+id/toolbar_title"
-            android:textSize="32dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Picture Detail"
+                android:textColor="@color/white"
+                android:layout_gravity="center"
+                android:id="@+id/toolbar_title"
+                android:textSize="32dp" />
 
-        <ImageButton
-            android:id="@+id/btn_goback"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="5dp"
-            android:layout_gravity="left"
-            android:background="#64b5f6"
-            android:clickable="true"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_action_arrow_left"
-            android:focusableInTouchMode="false"
-            />
+            <ImageButton
+                android:id="@+id/btn_goback1"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="5dp"
+                android:layout_gravity="left"
+                android:background="#64b5f6"
+                android:clickable="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_action_arrow_left"
+                android:focusableInTouchMode="false"
+                />
 
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_detail_screen" />
+    <include layout="@layout/content_picture_detail" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -189,7 +189,8 @@
         android:layout_centerInParent="true"
         android:minHeight="300dp"
         android:minWidth="200dp"
-        android:id="@+id/image"/>
+        android:id="@+id/image"
+        android:clickable="true" />
 
 </RelativeLayout>
 </ScrollView>

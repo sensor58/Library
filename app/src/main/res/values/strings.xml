@@ -22,5 +22,6 @@
         completions."
     </string>
     <string name="title_activity_detail_screen">DetailScreen</string>
+    <string name="title_activity_picture_detail">PictureDetail</string>
 
 </resources>

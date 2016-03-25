@@ -1,5 +1,6 @@
 package fiit.mtaa.library;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,7 +11,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.google.gson.Gson;
@@ -35,8 +38,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.Toast;
 
-public class DetailScreen extends AppCompatActivity {
+public class DetailScreen extends AppCompatActivity implements View.OnClickListener {
     private EditText author, title ,literaryForm, year, publisher, paperback, language, price, isbn;
+    private ImageButton btn_goback;
     private ImageView image;
     private String objectId;
 
@@ -61,12 +65,23 @@ public class DetailScreen extends AppCompatActivity {
         language = (EditText) findViewById(R.id.language);
         price = (EditText) findViewById(R.id.price);
         isbn = (EditText) findViewById(R.id.isbn);
+
+        btn_goback = (ImageButton) findViewById(R.id.btn_goback);
+        btn_goback.setOnClickListener(this);
         image = (ImageView) findViewById(R.id.image);
+        image.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(DetailScreen.this, PictureDetail.class);
+                startActivity(intent);
+            }
+        });
 
         new HttpGetBook().execute("");
     }
 
     public class HttpGetBook extends AsyncTask<String, Integer, String> {
+
+
 
         @Override
         protected void onPreExecute() {
@@ -116,6 +131,19 @@ public class DetailScreen extends AppCompatActivity {
             pDialog.dismiss();
 
             processReply(result);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_goback:
+                finish();
+                break;
+
+
+            default:
+                break;
         }
     }
 
