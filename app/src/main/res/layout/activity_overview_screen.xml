@@ -28,6 +28,15 @@
                 android:id="@+id/toolbar_title"
                 android:textSize="32dp" />
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_logout"
+                android:text="Log out"
+                android:background="#64b5f6"
+                android:clickable="true"
+                android:focusableInTouchMode="false"/>
+
             <ImageButton
                 android:id="@+id/toolbarButton"
                 android:layout_width="40dp"

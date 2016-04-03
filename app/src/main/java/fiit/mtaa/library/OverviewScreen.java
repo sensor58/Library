@@ -5,12 +5,14 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.google.gson.*;
@@ -26,16 +28,31 @@ import java.util.List;
 
 public class OverviewScreen extends AppCompatActivity {
 
+    public static final String PREFS_NAME = "LoginPrefs";
+
     private ArrayList<Book> books = new ArrayList<Book>();
     private ProgressDialog pDialog;
     private ListView listView;
 
     private ListBooksAdapter listBooksAdapter;
+    private Button btn_logout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview_screen);
+
+        btn_logout = (Button) findViewById(R.id.btn_logout);
+        btn_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.remove("logged");
+                editor.commit();
+                finish();
+            }
+        });
 
         listView = (ListView) findViewById(R.id.listBooks);
 

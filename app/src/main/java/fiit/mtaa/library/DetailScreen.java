@@ -23,6 +23,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
@@ -71,7 +72,12 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
         image = (ImageView) findViewById(R.id.image);
         image.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] bytes = stream.toByteArray();
+
                 Intent intent = new Intent(DetailScreen.this, PictureDetail.class);
+                intent.putExtra("image", bytes);
                 startActivity(intent);
             }
         });

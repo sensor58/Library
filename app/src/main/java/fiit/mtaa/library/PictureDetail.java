@@ -2,6 +2,7 @@ package fiit.mtaa.library;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -28,6 +29,11 @@ public class PictureDetail extends AppCompatActivity {
             }
         });
 
+        byte[] bytes = getIntent().getByteArrayExtra("image");
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+        imageDetail = (ImageView) findViewById(R.id.imageDetail);
+        imageDetail.setImageBitmap(bitmap);
     }
 
 }
