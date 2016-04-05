@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.google.gson.*;
@@ -27,8 +28,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class OverviewScreen extends AppCompatActivity {
-
-    public static final String PREFS_NAME = "LoginPrefs";
 
     private ArrayList<Book> books = new ArrayList<Book>();
     private ProgressDialog pDialog;
@@ -46,10 +45,6 @@ public class OverviewScreen extends AppCompatActivity {
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-                SharedPreferences.Editor editor = settings.edit();
-                editor.remove("logged");
-                editor.commit();
                 finish();
             }
         });
@@ -70,7 +65,7 @@ public class OverviewScreen extends AppCompatActivity {
             OkHttpClient client = new OkHttpClient();
 
                 Request request = new Request.Builder()
-                        .url("https://api.backendless.com/v1/data/Books")
+                        .url("https://api.backendless.com/v1/data/Books?props=author%2Ctitle%2CobjectId")
                         .header("application-id", "36E0E8DE-E56C-9A69-FFE7-9CE128693F00")
                         .addHeader("secret-key", "B1E5E7AC-907F-5A89-FFBB-AC7482E0E600")
                         .build();
@@ -83,7 +78,27 @@ public class OverviewScreen extends AppCompatActivity {
             }
             try {
 
-                return response.body().string();
+                switch (response.code()) {
+                    case 200: {
+                        return response.body().string();
+                    }
+
+                    case 204: {
+                        showDialog("No content to show!");
+                        break;
+                    }
+
+                    case 400: {
+                        showDialog("Bad request syntax!");
+                        break;
+                    }
+
+                    case 404: {
+                        showDialog("404 Not found!");
+                        break;
+                    }
+                };
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -162,4 +177,16 @@ public class OverviewScreen extends AppCompatActivity {
         Book[] data = null;
     }
 
+    private void showDialog(String message) {
+        new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle("Error")
+                .setMessage(message)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }).show();
+    }
 }
