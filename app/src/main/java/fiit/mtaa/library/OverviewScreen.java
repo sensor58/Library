@@ -6,6 +6,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
@@ -55,14 +58,30 @@ public class OverviewScreen extends AppCompatActivity {
         pDialog.setMessage("Loading Content ...");
         pDialog.show();
 
-        new TestMain().execute("");
+        new getAllBooks().execute("");
     }
 
-    public class TestMain extends AsyncTask<String, Integer, String> {
+    public class getAllBooks extends AsyncTask<String, Integer, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            int ret = checkConnection();
+            if(ret == -1)
+                this.cancel(true);
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            pDialog.dismiss();
+            showDialog("No internet connection! Try to refresh after while.");
+        }
 
         @Override
         protected String doInBackground(String... params) {
             OkHttpClient client = new OkHttpClient();
+
+            if(!this.isCancelled()) {
 
                 Request request = new Request.Builder()
                         .url("https://api.backendless.com/v1/data/Books?props=author%2Ctitle%2CobjectId")
@@ -70,37 +89,40 @@ public class OverviewScreen extends AppCompatActivity {
                         .addHeader("secret-key", "B1E5E7AC-907F-5A89-FFBB-AC7482E0E600")
                         .build();
 
-            Response response = null;
-            try {
-                response = client.newCall(request).execute();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
+                Response response = null;
 
-                switch (response.code()) {
-                    case 200: {
-                        return response.body().string();
+                try {
+                    response = client.newCall(request).execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+
+                    switch (response.code()) {
+                        case 200: {
+                            return response.body().string();
+                        }
+
+                        case 204: {
+                            showDialog("No content to show!");
+                            break;
+                        }
+
+                        case 400: {
+                            showDialog("Bad request syntax!");
+                            break;
+                        }
+
+                        case 404: {
+                            showDialog("404 Not found!");
+                            break;
+                        }
                     }
+                    ;
 
-                    case 204: {
-                        showDialog("No content to show!");
-                        break;
-                    }
-
-                    case 400: {
-                        showDialog("Bad request syntax!");
-                        break;
-                    }
-
-                    case 404: {
-                        showDialog("404 Not found!");
-                        break;
-                    }
-                };
-
-            } catch (Exception e) {
-                e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             return "";
@@ -109,9 +131,10 @@ public class OverviewScreen extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            pDialog.dismiss();
 
+            pDialog.dismiss();
             parseJson(result);
+
         }
     }
 
@@ -123,13 +146,12 @@ public class OverviewScreen extends AppCompatActivity {
         Gson gson = gsonBuilder.create();
         Wrapper wrapper = gson.fromJson(jsonString, Wrapper.class);
 
-        for(int i = 0; i < wrapper.data.length; i++) {
+        for (int i = 0; i < wrapper.data.length; i++) {
             books.add(wrapper.data[i]);
         }
 
         listView.setAdapter(new ListBooksAdapter(this, books));
         listView.setOnItemClickListener(new ListClickHandler());
-
     }
 
     public class ListClickHandler implements AdapterView.OnItemClickListener {
@@ -178,7 +200,7 @@ public class OverviewScreen extends AppCompatActivity {
     }
 
     private void showDialog(String message) {
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(OverviewScreen.this)
                 .setCancelable(false)
                 .setTitle("Error")
                 .setMessage(message)
@@ -188,5 +210,18 @@ public class OverviewScreen extends AppCompatActivity {
                         dialog.cancel();
                     }
                 }).show();
+    }
+
+    public int checkConnection() {
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                this.getSystemService(this.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if (networkInfo == null) {
+            return -1;
+        }
+        else {
+            return 0;
+        }
     }
 }
