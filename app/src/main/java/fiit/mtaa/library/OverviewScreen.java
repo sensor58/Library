@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -38,6 +39,7 @@ public class OverviewScreen extends AppCompatActivity {
 
     private ListBooksAdapter listBooksAdapter;
     private Button btn_logout;
+    private ImageButton btn_refresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,16 @@ public class OverviewScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+        btn_refresh = (ImageButton) findViewById(R.id.btn_refresh);
+        btn_refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
             }
         });
 
@@ -96,32 +108,47 @@ public class OverviewScreen extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                try {
+                if(response != null) {
+                    try {
+                        switch (response.code()) {
+                            case 200: {
+                                return response.body().string();
+                            }
 
-                    switch (response.code()) {
-                        case 200: {
-                            return response.body().string();
-                        }
+                            case 204: {
+                                OverviewScreen.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        showDialog("No content to show!");
+                                    }
+                                });
+                                return "";
+                            }
 
-                        case 204: {
-                            showDialog("No content to show!");
-                            break;
-                        }
+                            case 400: {
+                                OverviewScreen.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        showDialog("Bad request syntax!");
+                                    }
+                                });
+                                return "";
+                            }
 
-                        case 400: {
-                            showDialog("Bad request syntax!");
-                            break;
-                        }
+                            case 404: {
+                                OverviewScreen.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        showDialog("404 Not found!");
+                                    }
+                                });
+                                return "";
+                            }
+                        };
 
-                        case 404: {
-                            showDialog("404 Not found!");
-                            break;
-                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    ;
-
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
 
@@ -132,9 +159,10 @@ public class OverviewScreen extends AppCompatActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-            pDialog.dismiss();
-            parseJson(result);
-
+            if(result != null) {
+                pDialog.dismiss();
+                parseJson(result);
+            }
         }
     }
 

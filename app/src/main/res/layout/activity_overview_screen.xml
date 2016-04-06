@@ -38,7 +38,7 @@
                 android:focusableInTouchMode="false"/>
 
             <ImageButton
-                android:id="@+id/toolbarButton"
+                android:id="@+id/btn_refresh"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_margin="5dp"
