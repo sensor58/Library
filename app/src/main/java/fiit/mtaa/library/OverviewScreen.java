@@ -50,7 +50,24 @@ public class OverviewScreen extends AppCompatActivity {
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                new AlertDialog.Builder(OverviewScreen.this)
+                        .setTitle("Alert")
+                        .setMessage("Do you really want to logout?")
+
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .show();
             }
         });
 
@@ -86,7 +103,7 @@ public class OverviewScreen extends AppCompatActivity {
         protected void onCancelled() {
             super.onCancelled();
             pDialog.dismiss();
-            showDialog("No internet connection! Try to refresh after while.");
+            showDialog("Check your internet connection and try to refresh after while.");
         }
 
         @Override
@@ -139,7 +156,7 @@ public class OverviewScreen extends AppCompatActivity {
                                 OverviewScreen.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        showDialog("404 Not found!");
+                                        showDialog("Requested books not found!");
                                     }
                                 });
                                 return "";
@@ -149,6 +166,9 @@ public class OverviewScreen extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                }
+                else {
+                    this.cancel(true);
                 }
             }
 

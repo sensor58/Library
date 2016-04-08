@@ -1,7 +1,10 @@
 package fiit.mtaa.library;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -95,6 +98,27 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
             pDialog = new ProgressDialog(DetailScreen.this);
             pDialog.setMessage("Loading Content ...");
             pDialog.show();
+
+            int ret = checkConnection();
+            if(ret == -1)
+                this.cancel(true);
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            pDialog.dismiss();
+            new AlertDialog.Builder(DetailScreen.this)
+                    .setCancelable(false)
+                    .setTitle("Error")
+                    .setMessage("Check your internet connection and try again after while!")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            finish();
+                        }
+                    }).show();
         }
 
         @Override
@@ -106,26 +130,66 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
             sb.append(objectId);                                     //ID knihy ktoru chcem
             String url = sb.toString();
 
-            Log.i("Error", url);
+            if(!this.isCancelled()) {
 
+                Request request = new Request.Builder()
+                        .url(url)
+                        .header("application-id", "36E0E8DE-E56C-9A69-FFE7-9CE128693F00")
+                        .addHeader("secret-key", "B1E5E7AC-907F-5A89-FFBB-AC7482E0E600")
+                        .build();
 
-            Request request = new Request.Builder()
-                    .url(url)
-                    .header("application-id", "36E0E8DE-E56C-9A69-FFE7-9CE128693F00")
-                    .addHeader("secret-key", "B1E5E7AC-907F-5A89-FFBB-AC7482E0E600")
-                    .build();
+                Response response = null;
+                try {
+                    response = client.newCall(request).execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-            Response response = null;
-            try {
-                response = client.newCall(request).execute();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
+                if(response != null) {
+                    try {
+                        switch (response.code()) {
+                            case 200: {
+                                return response.body().string();
+                            }
 
-                return response.body().string();
-            } catch (Exception e) {
-                e.printStackTrace();
+                            case 204: {
+                                DetailScreen.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        showDialog("No content to show!");
+                                    }
+                                });
+                                return "";
+                            }
+
+                            case 400: {
+                                DetailScreen.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        showDialog("Bad request syntax!");
+                                    }
+                                });
+                                return "";
+                            }
+
+                            case 404: {
+                                DetailScreen.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        showDialog("Requested book not found!");
+                                    }
+                                });
+                                return "";
+                            }
+                        };
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                else {
+                    this.cancel(true);
+                }
             }
 
             return "";
@@ -228,9 +292,35 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
             }else{
 
                 pDialog.dismiss();
-                Toast.makeText(DetailScreen.this, "Image Does Not exist or Network Error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailScreen.this, "Image Does Not exist!", Toast.LENGTH_SHORT).show();
 
             }
+        }
+    }
+
+    private void showDialog(String message) {
+        new AlertDialog.Builder(DetailScreen.this)
+                .setCancelable(false)
+                .setTitle("Error")
+                .setMessage(message)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }).show();
+    }
+
+    public int checkConnection() {
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                this.getSystemService(this.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if (networkInfo == null) {
+            return -1;
+        }
+        else {
+            return 0;
         }
     }
 
