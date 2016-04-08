@@ -26,12 +26,12 @@
             android:textColor="@color/white"
             android:layout_gravity="center"
             android:id="@+id/toolbar_title"
-            android:textSize="32dp" />
+            android:textSize="28dp" />
 
         <ImageButton
             android:id="@+id/btn_goback"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_margin="5dp"
             android:layout_gravity="left"
             android:background="#64b5f6"
@@ -40,6 +40,29 @@
             android:src="@drawable/ic_action_arrow_left"
             android:focusableInTouchMode="false"
             />
+
+            <ImageButton
+                android:id="@+id/btn_trash"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="5dp"
+                android:layout_gravity="right"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:src="@drawable/ic_delete"
+                />
+
+            <ImageButton
+                android:id="@+id/btn_eidt"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="5dp"
+                android:layout_gravity="right"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:src="@drawable/ic_edit"
+                />
+
 
         </android.support.v7.widget.Toolbar>
 

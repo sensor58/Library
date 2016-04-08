@@ -5,6 +5,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,14 +19,17 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * Created by Tomas on 14.3.2016.
- */
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class ListBooksAdapter extends ArrayAdapter<Book> {
 
     LayoutInflater inflater;
+    Book bookToDelete;
     private ArrayList<Book> books;
 
     public ListBooksAdapter(Activity context, ArrayList<Book> books) {
@@ -54,6 +60,7 @@ public class ListBooksAdapter extends ArrayAdapter<Book> {
         if (convertView == null) vi = inflater.inflate(R.layout.layout_book, null);
 
         ImageButton imageButton = (ImageButton) vi.findViewById(R.id.listBooksButton);
+        imageButton.setTag(position);
         imageButton.setOnClickListener(new XClickHandler());
 
         TextView textView = (TextView) vi.findViewById(R.id.txtTitle);
@@ -68,9 +75,9 @@ public class ListBooksAdapter extends ArrayAdapter<Book> {
     public class XClickHandler implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            Log.i("Error", "Nemozno vymazat!");
+            int position = (Integer) v.getTag();
+            bookToDelete = getItem(position);
+
         }
     }
-
-
 }

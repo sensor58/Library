@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.*;
@@ -38,7 +39,7 @@ public class OverviewScreen extends AppCompatActivity {
     private ListView listView;
 
     private ListBooksAdapter listBooksAdapter;
-    private Button btn_logout;
+    private TextView btn_logout;
     private ImageButton btn_refresh;
     private ImageButton btn_add;
 
@@ -47,7 +48,7 @@ public class OverviewScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview_screen);
 
-        btn_logout = (Button) findViewById(R.id.btn_logout);
+        btn_logout = (TextView) findViewById(R.id.btn_logout);
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,6 +84,13 @@ public class OverviewScreen extends AppCompatActivity {
         });
 
         btn_add = (ImageButton) findViewById(R.id.btn_add);
+        btn_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OverviewScreen.this, NewBook.class);
+                startActivity(intent);
+            }
+        });
 
         listView = (ListView) findViewById(R.id.listBooks);
 

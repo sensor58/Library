@@ -23,5 +23,6 @@
     </string>
     <string name="title_activity_detail_screen">DetailScreen</string>
     <string name="title_activity_picture_detail">PictureDetail</string>
+    <string name="title_activity_new_book">NewBook</string>
 
 </resources>

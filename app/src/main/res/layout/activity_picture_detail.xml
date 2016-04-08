@@ -26,12 +26,12 @@
                 android:textColor="@color/white"
                 android:layout_gravity="center"
                 android:id="@+id/toolbar_title"
-                android:textSize="32dp" />
+                android:textSize="28dp" />
 
             <ImageButton
                 android:id="@+id/btn_goback1"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_margin="5dp"
                 android:layout_gravity="left"
                 android:background="#64b5f6"

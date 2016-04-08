@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="fiit.mtaa.library.OverviewScreen">
+    tools:context="fiit.mtaa.library.NewBook">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -16,44 +16,46 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#64b5f6"
+            android:background="@color/light_blue"
             app:popupTheme="@style/AppTheme.PopupOverlay" >
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Overview"
-                android:textColor="@color/white"
-                android:layout_gravity="center"
-                android:id="@+id/toolbar_title"
-                android:textSize="28dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Book"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:id="@+id/toolbar_title"
+            android:textSize="28dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/btn_logout"
-                android:text="Log out"
-                android:background="#64b5f6"
-                android:clickable="true"
-                android:onClick="onClick"
-                android:textSize="20dp"/>
+        <ImageButton
+            android:id="@+id/btn_goback3"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="5dp"
+            android:layout_gravity="left"
+            android:background="#64b5f6"
+            android:clickable="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_action_arrow_left"
+            android:focusableInTouchMode="false"
+            />
 
             <ImageButton
-                android:id="@+id/btn_refresh"
+                android:id="@+id/btn_check"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_margin="5dp"
                 android:layout_gravity="right"
-                android:background="#64b5f6"
+                android:background="@android:color/transparent"
                 android:clickable="true"
-                android:scaleType="fitXY"
-                android:src="@drawable/ic_action_reload"
-                android:focusableInTouchMode="false"/>
+                android:src="@drawable/ic_check"
+                />
 
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_overview_screen" />
+    <include layout="@layout/content_new_book" />
 
 </android.support.design.widget.CoordinatorLayout>
