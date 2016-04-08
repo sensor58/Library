@@ -77,7 +77,6 @@ public class ListBooksAdapter extends ArrayAdapter<Book> {
         public void onClick(View v) {
             int position = (Integer) v.getTag();
             bookToDelete = getItem(position);
-
         }
     }
 }

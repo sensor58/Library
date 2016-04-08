@@ -229,6 +229,7 @@ public class OverviewScreen extends AppCompatActivity {
         }
     }
 
+
     public class AuthorDeserializer implements JsonDeserializer<Book.Author> {
         @Override
         public Book.Author deserialize(JsonElement element, Type arg1, JsonDeserializationContext arg2) throws JsonParseException {

@@ -75,8 +75,24 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
         btn_trash.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //call delete activity
-                new HttpDeleteBook().execute("");
+                new AlertDialog.Builder(DetailScreen.this)
+                        .setTitle("Alert")
+                        .setMessage("Do you really want to delete this book?")
+
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                new HttpDeleteBook().execute("");
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .show();
             }
         });
 
