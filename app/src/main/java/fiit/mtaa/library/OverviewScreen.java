@@ -40,6 +40,7 @@ public class OverviewScreen extends AppCompatActivity {
     private ListBooksAdapter listBooksAdapter;
     private Button btn_logout;
     private ImageButton btn_refresh;
+    private ImageButton btn_add;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +82,8 @@ public class OverviewScreen extends AppCompatActivity {
             }
         });
 
+        btn_add = (ImageButton) findViewById(R.id.btn_add);
+
         listView = (ListView) findViewById(R.id.listBooks);
 
         pDialog = new ProgressDialog(OverviewScreen.this);
@@ -113,7 +116,7 @@ public class OverviewScreen extends AppCompatActivity {
             if(!this.isCancelled()) {
 
                 Request request = new Request.Builder()
-                        .url("https://api.backendless.com/v1/data/Books?props=author%2Ctitle%2CobjectId")
+                        .url("https://api.backendless.com/v1/data/Books?pageSize=100&props=author%2Ctitle%2CobjectId")
                         .header("application-id", "36E0E8DE-E56C-9A69-FFE7-9CE128693F00")
                         .addHeader("secret-key", "B1E5E7AC-907F-5A89-FFBB-AC7482E0E600")
                         .build();

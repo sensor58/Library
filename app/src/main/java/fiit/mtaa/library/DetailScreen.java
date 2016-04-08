@@ -290,7 +290,7 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
                 pDialog.dismiss();
 
             }else{
-
+                image.setClickable(false);
                 pDialog.dismiss();
                 Toast.makeText(DetailScreen.this, "Image Does Not exist!", Toast.LENGTH_SHORT).show();
 
