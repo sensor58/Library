@@ -41,6 +41,10 @@
         <activity
             android:name=".NewBook"
             android:label="@string/title_activity_new_book"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".EditBook"
+            android:label="@string/title_activity_edit_book"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

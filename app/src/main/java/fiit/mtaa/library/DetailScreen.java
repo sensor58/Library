@@ -83,7 +83,11 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
-                                new HttpDeleteBook().execute("");
+                             //   new HttpDeleteBook().execute("");
+                                Intent intent = new Intent();
+                                intent.putExtra("Book", book);
+                                setResult(RESULT_OK, intent);
+                                finish();
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -226,89 +230,7 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
             processReply(result);
         }
     }
-
-    public class HttpDeleteBook extends AsyncTask<String, Integer, String> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            int ret = checkConnection();
-            if(ret == -1)
-                this.cancel(true);
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            OkHttpClient client = new OkHttpClient();
-            StringBuilder sb = new StringBuilder();
-            sb.append("https://api.backendless.com/v1/data/Books");   //base url
-            sb.append("/");
-            if(book != null) {
-                sb.append(book.getObjectId());
-            }
-
-            String url = sb.toString();
-
-            if(!this.isCancelled()) {
-                Request request = new Request.Builder()
-                        .url(url)
-                        .header("application-id", "36E0E8DE-E56C-9A69-FFE7-9CE128693F00")
-                        .addHeader("secret-key", "B1E5E7AC-907F-5A89-FFBB-AC7482E0E600")
-                        .delete()
-                        .build();
-
-                Response response = null;
-
-                try {
-                    response = client.newCall(request).execute();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if(response != null) {
-                    try {
-                        switch (response.code()) {
-                            case 200: {
-                                break;
-                            }
-
-                            case 400: {
-                                DetailScreen.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        showDialog("Bad request syntax!");
-                                    }
-                                });
-                                return "";
-                            }
-
-                            case 404: {
-                                DetailScreen.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        showDialog("Requested books not found!");
-                                    }
-                                });
-                                return "";
-                            }
-                        };
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                else {
-                    this.cancel(true);
-                }
-            }
-            return null;
-
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            finish();
-        }
-    }
+    
 
     @Override
     public void onClick(View v) {

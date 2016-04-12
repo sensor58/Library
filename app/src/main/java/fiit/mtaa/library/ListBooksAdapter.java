@@ -80,7 +80,8 @@ public class ListBooksAdapter extends ArrayAdapter<Book> {
             int position = (Integer) v.getTag();
             bookToDelete = getItem(position);
 
-            ((OverviewScreen)context).deleteBook(bookToDelete);
+            //((OverviewScreen)context).deleteBook(bookToDelete);
+            ((OverviewScreen)context).showAlertDialog(bookToDelete);
         }
     }
 }

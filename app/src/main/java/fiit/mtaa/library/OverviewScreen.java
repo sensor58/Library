@@ -42,7 +42,7 @@ public class OverviewScreen extends AppCompatActivity {
     private TextView btn_logout;
     private ImageButton btn_refresh;
     private ImageButton btn_add;
-
+    private int RequestCode = 100;
     private Book book;
 
     @Override
@@ -102,6 +102,15 @@ public class OverviewScreen extends AppCompatActivity {
 
         new getAllBooks().execute("");
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == RequestCode && resultCode == RESULT_OK){
+            deleteBook((Book) data.getExtras().get("Book"));
+        }
+    }
+
 
     public class getAllBooks extends AsyncTask<String, Integer, String> {
         @Override
@@ -216,6 +225,7 @@ public class OverviewScreen extends AppCompatActivity {
     }
 
     public class ListClickHandler implements AdapterView.OnItemClickListener {
+
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Intent intent = new Intent(OverviewScreen.this, DetailScreen.class);
@@ -227,7 +237,8 @@ public class OverviewScreen extends AppCompatActivity {
             bundle.putString("objectId", objectId);               //pridanie ID ako argumentu
             intent.putExtras(bundle);
 
-            startActivity(intent);
+           // startActivity(intent);
+            startActivityForResult(intent, RequestCode);
         }
     }
 
@@ -354,6 +365,27 @@ public class OverviewScreen extends AppCompatActivity {
                         dialog.cancel();
                     }
                 }).show();
+    }
+
+    public void showAlertDialog(final Book bookToDelete) {
+        new AlertDialog.Builder(OverviewScreen.this)
+                .setTitle("Alert")
+                .setMessage("Do you really want to delete this book?")
+
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        deleteBook(bookToDelete);
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
     }
 
     public int checkConnection() {
