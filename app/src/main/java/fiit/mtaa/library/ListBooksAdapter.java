@@ -28,13 +28,15 @@ import okhttp3.Response;
 
 public class ListBooksAdapter extends ArrayAdapter<Book> {
 
-    LayoutInflater inflater;
-    Book bookToDelete;
+    private LayoutInflater inflater;
+    private Book bookToDelete;
     private ArrayList<Book> books;
+    private Activity context;
 
     public ListBooksAdapter(Activity context, ArrayList<Book> books) {
         super(context, 0, books);
 
+        this.context = context;
         this.books = books;
         this.inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -77,6 +79,8 @@ public class ListBooksAdapter extends ArrayAdapter<Book> {
         public void onClick(View v) {
             int position = (Integer) v.getTag();
             bookToDelete = getItem(position);
+
+            ((OverviewScreen)context).deleteBook(bookToDelete);
         }
     }
 }

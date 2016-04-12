@@ -43,6 +43,8 @@ public class OverviewScreen extends AppCompatActivity {
     private ImageButton btn_refresh;
     private ImageButton btn_add;
 
+    private Book book;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -229,6 +231,88 @@ public class OverviewScreen extends AppCompatActivity {
         }
     }
 
+    public void deleteBook(Book bookToDelete) {
+        book = bookToDelete;
+
+        new HttpDeleteBook().execute("");
+
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
+    }
+
+    public class HttpDeleteBook extends AsyncTask<String, Integer, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            int ret = checkConnection();
+            if(ret == -1)
+                this.cancel(true);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            OkHttpClient client = new OkHttpClient();
+            StringBuilder sb = new StringBuilder();
+            sb.append("https://api.backendless.com/v1/data/Books");   //base url
+            sb.append("/");
+            if(book != null) {
+                sb.append(book.getObjectId());
+            }
+
+            String url = sb.toString();
+
+            if(!this.isCancelled()) {
+                Request request = new Request.Builder()
+                        .url(url)
+                        .header("application-id", "36E0E8DE-E56C-9A69-FFE7-9CE128693F00")
+                        .addHeader("secret-key", "B1E5E7AC-907F-5A89-FFBB-AC7482E0E600")
+                        .delete()
+                        .build();
+
+                Response response = null;
+
+                try {
+                    response = client.newCall(request).execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if(response != null) {
+                    try {
+                        switch (response.code()) {
+                            case 200: {
+                                break;
+                            }
+
+                            case 400: {
+                                showDialog("Bad request syntax!");
+                                return "";
+                            }
+
+                            case 404: {
+                                showDialog("Requested books not found!");
+                                return "";
+                            }
+                        };
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                else {
+                    this.cancel(true);
+                }
+            }
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+        }
+    }
 
     public class AuthorDeserializer implements JsonDeserializer<Book.Author> {
         @Override
