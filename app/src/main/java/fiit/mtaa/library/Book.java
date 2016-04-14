@@ -20,32 +20,6 @@ public class Book implements Serializable {
 
     public void setAuthor(Author author) { this.author = author; }
 
-    public String getAuthorName(int num) {
-        switch(num) {
-            case 1:
-                return "Dan Brown";
-            case 2:
-                return "Wiliam Shakespeare";
-            case 3:
-                return "Jo Nesbo";
-            case 4:
-                return "Dominik Dan";
-            case 5:
-                return "Martin Kukucin";
-            case 6:
-                return "Margita Figuli";
-            case 7:
-                return "Johann Wolfgang von Goethe";
-            case 8:
-                return "Nicholas Sparks";
-            case 9:
-                return "Christian Morgenstern";
-            case 10:
-                return "Dusan Dusek";
-        }
-        return null;
-    }
-
     public String getIsbn() {
         return isbn;
     }

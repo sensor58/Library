@@ -60,12 +60,12 @@
             android:visibility="visible"
             android:enabled="false"
             android:clickable="false"
-            android:editable="false"
+            android:editable="true"
             android:minHeight="40dp"
             android:text="Title: "
             android:backgroundTint="@android:color/transparent"
             android:width="110dp"
-            android:layout_below="@+id/lbl_author"/>
+            android:layout_below="@+id/author"/>
 
         <EditText
             android:layout_width="wrap_content"
@@ -101,7 +101,7 @@
             android:width="110dp"
             android:layout_below="@+id/lbl_title"/>
 
-        <EditText
+        <Spinner
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -114,9 +114,9 @@
             android:editable="true"
             android:minHeight="40dp"
             android:backgroundTint="#646464"
-            android:layout_alignBottom="@+id/lbl_literaryForm"
-            android:layout_alignEnd="@+id/title"
-            android:layout_toEndOf="@+id/lbl_literaryForm" />
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/lbl_literaryForm"
+            android:layout_below="@+id/title"/>
 
         <EditText
             android:layout_width="wrap_content"
@@ -237,7 +237,7 @@
             android:width="110dp"
             android:layout_below="@+id/lbl_paperback"/>
 
-        <EditText
+        <Spinner
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -250,9 +250,9 @@
             android:editable="true"
             android:minHeight="40dp"
             android:backgroundTint="#646464"
-            android:layout_below="@+id/lbl_paperback"
             android:layout_alignParentEnd="true"
-            android:layout_toEndOf="@+id/lbl_language" />
+            android:layout_toEndOf="@+id/lbl_language"
+            android:layout_below="@+id/paperback"/>
 
         <EditText
             android:layout_width="wrap_content"
@@ -269,7 +269,7 @@
             android:text="ISBN: "
             android:backgroundTint="@android:color/transparent"
             android:width="110dp"
-            android:layout_below="@+id/lbl_language"/>
+            android:layout_below="@+id/language"/>
 
         <EditText
             android:layout_width="wrap_content"
@@ -284,7 +284,7 @@
             android:editable="true"
             android:minHeight="40dp"
             android:backgroundTint="#646464"
-            android:layout_below="@+id/lbl_language"
+            android:layout_below="@+id/language"
             android:layout_alignParentEnd="true"
             android:layout_toEndOf="@+id/lbl_isbn" />
 

@@ -111,7 +111,6 @@ public class OverviewScreen extends AppCompatActivity {
         }
     }
 
-
     public class getAllBooks extends AsyncTask<String, Integer, String> {
         @Override
         protected void onPreExecute() {
@@ -237,7 +236,6 @@ public class OverviewScreen extends AppCompatActivity {
             bundle.putString("objectId", objectId);               //pridanie ID ako argumentu
             intent.putExtras(bundle);
 
-           // startActivity(intent);
             startActivityForResult(intent, RequestCode);
         }
     }

@@ -51,7 +51,7 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
 
     private Bitmap bitmap;
     private ProgressDialog pDialog;
-
+    private int RequestCode = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +112,16 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
                 Intent intent = new Intent(DetailScreen.this, PictureDetail.class);
                 intent.putExtra("image", bytes);
                 startActivity(intent);
+            }
+        });
+
+        btn_edit = (ImageButton) findViewById(R.id.btn_eidt);
+        btn_edit.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(DetailScreen.this, EditBook.class);
+                intent.putExtra("Book", book);
+                intent.putExtra("ID", objectId);
+                startActivityForResult(intent, RequestCode);
             }
         });
 
@@ -230,7 +240,16 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
             processReply(result);
         }
     }
-    
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == RequestCode && resultCode == RESULT_OK){
+            if (data.hasExtra("Json")) {
+                processReply((String) data.getExtras().get("Json"));
+            }
+        }
+    }
 
     @Override
     public void onClick(View v) {
