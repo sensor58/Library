@@ -88,8 +88,13 @@ public class EditBook extends AppCompatActivity implements View.OnClickListener 
         btn_check = (ImageButton) findViewById(R.id.btn_check);
         btn_check.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (checkInputFields() && tryMakeJson())
-                    new HttpEditBook().execute("");
+                if(checkConnection() == 0) {
+                    if (checkInputFields() && tryMakeJson())
+                        new HttpEditBook().execute("");
+                }
+                else {
+                    showDialog("Check your internet connection and try again after while!");
+                }
             }
         });
 

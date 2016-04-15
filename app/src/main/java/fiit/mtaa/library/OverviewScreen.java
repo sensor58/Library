@@ -79,9 +79,14 @@ public class OverviewScreen extends AppCompatActivity {
         btn_refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);
+                if(checkConnection() == 0) {
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                }
+                else {
+                    showDialog("Check your internet connection and try again after while!");
+                }
             }
         });
 
@@ -243,11 +248,16 @@ public class OverviewScreen extends AppCompatActivity {
     public void deleteBook(Book bookToDelete) {
         book = bookToDelete;
 
-        new HttpDeleteBook().execute("");
+        if(checkConnection() == 0) {
+            new HttpDeleteBook().execute("");
 
-        Intent intent = getIntent();
-        finish();
-        startActivity(intent);
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
+        }
+        else {
+            showDialog("Check your internet connection and try again after while!");
+        }
     }
 
     public class HttpDeleteBook extends AsyncTask<String, Integer, String> {

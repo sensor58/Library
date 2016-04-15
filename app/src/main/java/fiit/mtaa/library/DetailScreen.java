@@ -83,11 +83,16 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
-                             //   new HttpDeleteBook().execute("");
-                                Intent intent = new Intent();
-                                intent.putExtra("Book", book);
-                                setResult(RESULT_OK, intent);
-                                finish();
+
+                                if(checkConnection() == 0) {
+                                    Intent intent = new Intent();
+                                    intent.putExtra("Book", book);
+                                    setResult(RESULT_OK, intent);
+                                    finish();
+                                }
+                                else {
+                                    showDialog("Check your internet connection and try again after while!");
+                                }
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
