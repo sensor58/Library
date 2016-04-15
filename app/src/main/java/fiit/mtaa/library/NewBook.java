@@ -45,7 +45,7 @@ public class NewBook extends AppCompatActivity {
             }
         });
 
-
+        showDialog("Coming soon...:-)");
     }
 
     public class HttpPostBook extends AsyncTask<String, Integer, String> {
@@ -92,12 +92,13 @@ public class NewBook extends AppCompatActivity {
     private void showDialog(String message) {
         new AlertDialog.Builder(NewBook.this)
                 .setCancelable(false)
-                .setTitle("Error")
+                .setTitle("Under construction")
                 .setMessage(message)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
+                        finish();
                     }
                 }).show();
     }

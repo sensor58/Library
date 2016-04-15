@@ -273,15 +273,15 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
 
         book = gson.fromJson(jsonString, Book.class);      //parsovanie vrateneho JSonu
 
-        author.append(book.getAuthor().toString());             //nastavenie jednotlivych poli
-        title.append(book.getTitle());
-        literaryForm.append(book.getLiteraryForm().toString());
-        year.append(Integer.toString(book.getYear()));
-        publisher.append(book.getPublisher());
-        paperback.append(Integer.toString(book.getPaperback()));
-        language.append(book.getLanguage().toString());
-        isbn.append(book.getIsbn());
-        price.append(Double.toString(book.getPrice()));
+        author.setText("Author: " + book.getAuthor().toString());             //nastavenie jednotlivych poli
+        title.setText("Title: " + book.getTitle());
+        literaryForm.setText("Literary form: " + book.getLiteraryForm().toString());
+        year.setText("Year: " + Integer.toString(book.getYear()));
+        publisher.setText("Publisher: " + book.getPublisher());
+        paperback.setText("Paperback: " + Integer.toString(book.getPaperback()));
+        language.setText("Language: " + book.getLanguage().toString());
+        isbn.setText("ISBN: " + book.getIsbn());
+        price.setText("Price (in €): " + Double.toString(book.getPrice()));
 
         new LoadImage().execute(book.getPicture());         //zavolanie funkcie, kt nacita obrazok v novom vlakne
     }

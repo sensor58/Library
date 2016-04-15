@@ -23,6 +23,9 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +43,7 @@ import okio.BufferedSink;
 public class EditBook extends AppCompatActivity implements View.OnClickListener {
 
     private Book book;
-    private ImageButton btn_goback, btn_check;
+    private ImageButton btn_goback4, btn_check;
     private EditText title, year, publisher, paperback, price, isbn, imageUrl;
     private Spinner author, literaryForm, language;
 
@@ -79,17 +82,81 @@ public class EditBook extends AppCompatActivity implements View.OnClickListener 
         literaryForm = (Spinner) findViewById(R.id.literaryForm);
         language = (Spinner) findViewById(R.id.language);
 
-        btn_goback = (ImageButton) findViewById(R.id.btn_goback4);
-        btn_goback.setOnClickListener(this);
+        btn_goback4 = (ImageButton) findViewById(R.id.btn_goback4);
+        btn_goback4.setOnClickListener(this);
 
         btn_check = (ImageButton) findViewById(R.id.btn_check);
-        btn_goback.setOnClickListener(new View.OnClickListener() {
+        btn_check.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (tryMakeJson()) new HttpEditBook().execute("");
+                if (checkInputFields() && tryMakeJson())
+                    new HttpEditBook().execute("");
             }
         });
 
         showDeatails();
+    }
+
+    private boolean checkInputFields() {
+        String input;
+
+        input = year.getText().toString();
+        try {
+            int n = Integer.parseInt(input);
+        }
+        catch (NumberFormatException e) {
+            EditBook.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showDialog("Wrong input format in field: Year");
+                }
+            });
+            return false;
+        }
+
+        input = paperback.getText().toString();
+        try {
+            int n = Integer.parseInt(input);
+        }
+        catch (NumberFormatException e) {
+            EditBook.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showDialog("Wrong input format in field: Paperback");
+                }
+            });
+            return false;
+        }
+
+        input = price.getText().toString();
+        try {
+            double n = Double.parseDouble(input);
+        }
+        catch (NumberFormatException e) {
+            EditBook.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showDialog("Wrong input format in field: Price");
+                }
+            });
+            return false;
+        }
+
+        input = isbn.getText().toString();
+        try {
+            long n = Long.parseLong(input);
+        }
+        catch (NumberFormatException e) {
+            EditBook.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showDialog("Wrong input format in field: ISBN");
+                }
+            });
+            return false;
+        }
+
+        return true;
+
     }
 
     private boolean tryMakeJson() {
@@ -149,7 +216,8 @@ public class EditBook extends AppCompatActivity implements View.OnClickListener 
              authors.add(Book.Author.values()[i].toString());
         }
 
-        ArrayAdapter<String> authorsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, authors);
+      //  ArrayAdapter<String> authorsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, authors);
+        ArrayAdapter<String> authorsAdapter = new ArrayAdapter<String>(this, R.layout.spinner_layout, authors);
         authorsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         author.setAdapter(authorsAdapter);
         author.setSelection(selectedAuthor.getValue()-1);
@@ -174,7 +242,7 @@ public class EditBook extends AppCompatActivity implements View.OnClickListener 
             languages.add(Book.Language.values()[i].toString());
         }
 
-        ArrayAdapter<String> languagesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, languages);
+        ArrayAdapter<String> languagesAdapter = new ArrayAdapter<String>(this, R.layout.spinner_layout, languages);
         languagesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         language.setAdapter(languagesAdapter);
         language.setSelection(selectedLanguage.getValue()-1);
@@ -199,7 +267,7 @@ public class EditBook extends AppCompatActivity implements View.OnClickListener 
             literaryForms.add(Book.LiteraryForm.values()[i].toString());
         }
 
-        ArrayAdapter<String> literaryFormAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, literaryForms);
+        ArrayAdapter<String> literaryFormAdapter = new ArrayAdapter<String>(this, R.layout.spinner_layout, literaryForms);
         literaryFormAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         literaryForm.setAdapter(literaryFormAdapter);
         literaryForm.setSelection(selectedLiteraryForm.getValue()-1);
@@ -353,7 +421,7 @@ public class EditBook extends AppCompatActivity implements View.OnClickListener 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_goback:
+            case R.id.btn_goback4:
                 Intent intent = new Intent();
                 setResult(RESULT_OK, intent);
                 finish();
