@@ -14,26 +14,36 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 
+
+import java.net.URISyntaxException;
+
+import io.socket.*;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
 import okhttp3.OkHttpClient;
 
 public class NewBook extends AppCompatActivity {
-    private EditText author, title ,literaryForm, year, publisher, paperback, language, price, isbn;
+    private EditText title, year, publisher, paperback, price, isbn, imageUrl;
+    private Spinner author, literaryForm, language;
     private ImageButton btn_goback3;
     private ProgressDialog pDialog;
+    private Socket socket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_book);
 
-        author = (EditText) findViewById(R.id.author);
+        author = (Spinner) findViewById(R.id.author);
         title = (EditText) findViewById(R.id.title);
-        literaryForm = (EditText) findViewById(R.id.literaryForm);
+        literaryForm = (Spinner) findViewById(R.id.literaryForm);
         year = (EditText) findViewById(R.id.year);
         publisher = (EditText) findViewById(R.id.publisher);
         paperback = (EditText) findViewById(R.id.paperback);
-        language = (EditText) findViewById(R.id.language);
+        language = (Spinner) findViewById(R.id.language);
         price = (EditText) findViewById(R.id.price);
         isbn = (EditText) findViewById(R.id.isbn);
 
@@ -44,11 +54,9 @@ public class NewBook extends AppCompatActivity {
                 finish();
             }
         });
-
-        showDialog("Coming soon...:-)");
     }
 
-    public class HttpPostBook extends AsyncTask<String, Integer, String> {
+    public class PostBook extends AsyncTask<String, Integer, String> {
 
         @Override
         protected void onPreExecute() {
@@ -78,10 +86,24 @@ public class NewBook extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            OkHttpClient client = new OkHttpClient();
-            String url = "https://api.backendless.com/v1/data/Books";
 
             if(!this.isCancelled()) {
+                IO.Options opts = new IO.Options();
+                opts.secure = false;
+                opts.port = 1341;
+                opts.reconnection = true;
+                opts.forceNew = true;
+                opts.timeout = 5000;
+
+                try {
+                    socket = IO.socket("http://sandbox.touch4it.com:1341/?__sails_io_sdk_version=0.12.1", opts);
+                    socket.connect();
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+
+
+
 
             }
             return null;
