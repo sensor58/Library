@@ -17,10 +17,14 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.URISyntaxException;
 
 import io.socket.*;
 
+import io.socket.client.Ack;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import okhttp3.OkHttpClient;
@@ -28,7 +32,7 @@ import okhttp3.OkHttpClient;
 public class NewBook extends AppCompatActivity {
     private EditText title, year, publisher, paperback, price, isbn, imageUrl;
     private Spinner author, literaryForm, language;
-    private ImageButton btn_goback3;
+    private ImageButton btn_goback3, btn_check;
     private ProgressDialog pDialog;
     private Socket socket;
 
@@ -54,6 +58,8 @@ public class NewBook extends AppCompatActivity {
                 finish();
             }
         });
+
+        btn_check = (ImageButton) findViewById(R.id.btn_check);
     }
 
     public class PostBook extends AsyncTask<String, Integer, String> {
@@ -102,9 +108,21 @@ public class NewBook extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
+                String json = null;     //tu treba dat objekt knihy.
 
 
+                JSONObject js = new JSONObject();
+                try {
+                    js.put("url", "/data/Library1");
+                    js.put("data", new JSONObject().put("data", new JSONObject(json)));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
+                socket.emit("post", js, new Ack() {
+                    @Override
+                    public void call(Object... args) {}
+                });
             }
             return null;
         }
