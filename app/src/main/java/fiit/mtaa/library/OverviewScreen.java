@@ -24,10 +24,18 @@ import android.widget.Toast;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import io.socket.client.Ack;
+import io.socket.client.IO;
+import io.socket.client.Socket;
 import okhttp3.*;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,6 +52,9 @@ public class OverviewScreen extends AppCompatActivity {
     private ImageButton btn_add;
     private int RequestCode = 100;
     private Book book;
+    private Socket socket;
+    private JSONObject returnedJson;
+    private String jsonString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +116,8 @@ public class OverviewScreen extends AppCompatActivity {
         pDialog.setMessage("Loading Content ...");
         pDialog.show();
 
-        new getAllBooks().execute("");
+       // new getAllBooks().execute("");
+        new getAllBooksSocket().execute("");
     }
 
     @Override
@@ -116,7 +128,7 @@ public class OverviewScreen extends AppCompatActivity {
         }
     }
 
-    public class getAllBooks extends AsyncTask<String, Integer, String> {
+    public class getAllBooksSocket extends AsyncTask<String, Integer, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -134,68 +146,60 @@ public class OverviewScreen extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            OkHttpClient client = new OkHttpClient();
-
             if(!this.isCancelled()) {
-
-                Request request = new Request.Builder()
-                        .url("https://api.backendless.com/v1/data/Books?pageSize=100&props=author%2Ctitle%2CobjectId")
-                        .header("application-id", "36E0E8DE-E56C-9A69-FFE7-9CE128693F00")
-                        .addHeader("secret-key", "B1E5E7AC-907F-5A89-FFBB-AC7482E0E600")
-                        .build();
-
-                Response response = null;
+                IO.Options opts = new IO.Options();
+                opts.secure = false;
+                opts.port = 1341;
+                opts.reconnection = true;
+                opts.forceNew = true;
+                opts.timeout = 5000;
 
                 try {
-                    response = client.newCall(request).execute();
-                } catch (IOException e) {
+                    socket = IO.socket("http://sandbox.touch4it.com:1341/?__sails_io_sdk_version=0.12.1", opts);
+                    socket.connect();
+                } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
-                if(response != null) {
-                    try {
-                        switch (response.code()) {
-                            case 200: {
-                                return response.body().string();
-                            }
 
-                            case 204: {
-                                OverviewScreen.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        showDialog("No content to show!");
-                                    }
-                                });
-                                return "";
-                            }
+                JSONObject js = new JSONObject();
+                try {
+                    js.put("url", "/data/Library1");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-                            case 400: {
+                socket.emit("get", js, new Ack() {
+                    @Override
+                    public void call(Object... args) {
+                        returnedJson = (JSONObject) args[0];
+
+                        try {
+                            if (returnedJson.getInt("statusCode") == 200) {
+                                JSONObject jo = (JSONObject) returnedJson.get("body");
+                                JSONArray ja = (JSONArray) jo.get("data");
+
+                                parseJson(ja);
+
+                            } else if (returnedJson.getInt("statusCode") == 400) {
                                 OverviewScreen.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         showDialog("Bad request syntax!");
                                     }
                                 });
-                                return "";
-                            }
-
-                            case 404: {
+                            } else if (returnedJson.getInt("statusCode") == 500) {
                                 OverviewScreen.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        showDialog("Requested books not found!");
+                                        showDialog("Server error!");
                                     }
                                 });
-                                return "";
                             }
-                        };
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
                     }
-                }
-                else {
-                    this.cancel(true);
-                }
+                });
             }
 
             return "";
@@ -207,25 +211,33 @@ public class OverviewScreen extends AppCompatActivity {
 
             if(result != null) {
                 pDialog.dismiss();
-                parseJson(result);
+                updateView();
             }
         }
     }
 
-    private void parseJson(String jsonString) {
+    private void updateView() {
+        listView.setAdapter(new ListBooksAdapter(this, books));
+        listView.setOnItemClickListener(new ListClickHandler());
+    }
+
+    private void parseJson(JSONArray jsonArray) {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(Book.Author.class, new AuthorDeserializer());
         gsonBuilder.registerTypeAdapter(Book.LiteraryForm.class, new LiteraryFormDeserializer());
         gsonBuilder.registerTypeAdapter(Book.Language.class, new LanguageDeserializer());
         Gson gson = gsonBuilder.create();
-        Wrapper wrapper = gson.fromJson(jsonString, Wrapper.class);
 
-        for (int i = 0; i < wrapper.data.length; i++) {
-            books.add(wrapper.data[i]);
+        for(int i=0; i < jsonArray.length(); i++) {
+            Book newBook = new Book();
+            try {
+                newBook = gson.fromJson(jsonArray.getJSONObject(i).get("data").toString(), Book.class);
+                newBook.setObjectId(jsonArray.getJSONObject(i).get("id").toString());
+                books.add(newBook);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
-
-        listView.setAdapter(new ListBooksAdapter(this, books));
-        listView.setOnItemClickListener(new ListClickHandler());
     }
 
     public class ListClickHandler implements AdapterView.OnItemClickListener {
@@ -332,6 +344,8 @@ public class OverviewScreen extends AppCompatActivity {
 
         }
     }
+
+
 
     public class AuthorDeserializer implements JsonDeserializer<Book.Author> {
         @Override
