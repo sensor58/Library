@@ -180,6 +180,13 @@ public class OverviewScreen extends AppCompatActivity {
 
                                 parseJson(ja);
 
+                                OverviewScreen.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        updateView();
+                                    }
+                                });
+
                             } else if (returnedJson.getInt("statusCode") == 400) {
                                 OverviewScreen.this.runOnUiThread(new Runnable() {
                                     @Override
@@ -211,7 +218,6 @@ public class OverviewScreen extends AppCompatActivity {
 
             if(result != null) {
                 pDialog.dismiss();
-                updateView();
             }
         }
     }
