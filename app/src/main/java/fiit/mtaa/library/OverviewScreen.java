@@ -56,6 +56,8 @@ public class OverviewScreen extends AppCompatActivity {
     private JSONObject returnedJson;
     private String jsonString;
 
+    private String deleteId = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,11 +114,6 @@ public class OverviewScreen extends AppCompatActivity {
 
         listView = (ListView) findViewById(R.id.listBooks);
 
-        pDialog = new ProgressDialog(OverviewScreen.this);
-        pDialog.setMessage("Loading Content ...");
-        pDialog.show();
-
-       // new getAllBooks().execute("");
         new getAllBooksSocket().execute("");
     }
 
@@ -124,7 +121,7 @@ public class OverviewScreen extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == RequestCode && resultCode == RESULT_OK){
-            deleteBook((Book) data.getExtras().get("Book"));
+            deleteBook(data.getExtras().getString("id"));
         }
     }
 
@@ -135,6 +132,9 @@ public class OverviewScreen extends AppCompatActivity {
             int ret = checkConnection();
             if(ret == -1)
                 this.cancel(true);
+            pDialog = new ProgressDialog(OverviewScreen.this);
+            pDialog.setMessage("Loading Content ...");
+            pDialog.show();
         }
 
         @Override
@@ -263,11 +263,11 @@ public class OverviewScreen extends AppCompatActivity {
         }
     }
 
-    public void deleteBook(Book bookToDelete) {
-        book = bookToDelete;
+    public void deleteBook(String id) {
+        deleteId = id;
 
         if(checkConnection() == 0) {
-            new HttpDeleteBook().execute("");
+            new deleteBookSocket().execute("");
 
             Intent intent = getIntent();
             finish();
@@ -278,7 +278,7 @@ public class OverviewScreen extends AppCompatActivity {
         }
     }
 
-    public class HttpDeleteBook extends AsyncTask<String, Integer, String> {
+    public class deleteBookSocket extends AsyncTask<String, Integer, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -288,70 +288,83 @@ public class OverviewScreen extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(String... params) {
-            OkHttpClient client = new OkHttpClient();
-            StringBuilder sb = new StringBuilder();
-            sb.append("https://api.backendless.com/v1/data/Books");   //base url
-            sb.append("/");
-            if(book != null) {
-                sb.append(book.getObjectId());
-            }
-
-            String url = sb.toString();
-
-            if(!this.isCancelled()) {
-                Request request = new Request.Builder()
-                        .url(url)
-                        .header("application-id", "36E0E8DE-E56C-9A69-FFE7-9CE128693F00")
-                        .addHeader("secret-key", "B1E5E7AC-907F-5A89-FFBB-AC7482E0E600")
-                        .delete()
-                        .build();
-
-                Response response = null;
-
-                try {
-                    response = client.newCall(request).execute();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if(response != null) {
-                    try {
-                        switch (response.code()) {
-                            case 200: {
-                                break;
-                            }
-
-                            case 400: {
-                                showDialog("Bad request syntax!");
-                                return "";
-                            }
-
-                            case 404: {
-                                showDialog("Requested books not found!");
-                                return "";
-                            }
-                        };
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                else {
-                    this.cancel(true);
-                }
-            }
-            return null;
-
+        protected void onCancelled() {
+            super.onCancelled();
+            showDialog("Check your internet connection and try to refresh after while.");
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected String doInBackground(String... params) {
+            if(!this.isCancelled()) {
+                IO.Options opts = new IO.Options();
+                opts.secure = false;
+                opts.port = 1341;
+                opts.reconnection = true;
+                opts.forceNew = true;
+                opts.timeout = 5000;
+
+                try {
+                    socket = IO.socket("http://sandbox.touch4it.com:1341/?__sails_io_sdk_version=0.12.1", opts);
+                    socket.connect();
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+
+                JSONObject js = new JSONObject();
+                try {
+                    if (deleteId != null) {
+                        js.put("url", "/data/Library1/" + deleteId);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                socket.emit("delete", js, new Ack() {
+                    @Override
+                    public void call(Object... args) {
+                        returnedJson = (JSONObject) args[0];
+
+                        try {
+                            if (returnedJson.getInt("statusCode") == 200) {
+
+                            } else if (returnedJson.getInt("statusCode") == 400) {
+                                OverviewScreen.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        showDialog("Bad request syntax!");
+                                    }
+                                });
+                            } else if (returnedJson.getInt("statusCode") == 404) {
+                                OverviewScreen.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        showDialog("Not Found!");
+                                    }
+                                });
+                            } else if (returnedJson.getInt("statusCode") == 500) {
+                                OverviewScreen.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        showDialog("Server error!");
+                                    }
+                                });
+                            }
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                });
+            }
+
+            return "";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
 
         }
     }
-
-
 
     public class AuthorDeserializer implements JsonDeserializer<Book.Author> {
         @Override
@@ -395,7 +408,7 @@ public class OverviewScreen extends AppCompatActivity {
                 }).show();
     }
 
-    public void showAlertDialog(final Book bookToDelete) {
+    public void showAlertDialog(final String id) {
         new AlertDialog.Builder(OverviewScreen.this)
                 .setTitle("Alert")
                 .setMessage("Do you really want to delete this book?")
@@ -404,7 +417,7 @@ public class OverviewScreen extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
-                        deleteBook(bookToDelete);
+                        deleteBook(id);
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {

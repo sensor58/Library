@@ -81,7 +81,7 @@ public class ListBooksAdapter extends ArrayAdapter<Book> {
             bookToDelete = getItem(position);
 
             //((OverviewScreen)context).deleteBook(bookToDelete);
-            ((OverviewScreen)context).showAlertDialog(bookToDelete);
+            ((OverviewScreen)context).showAlertDialog(bookToDelete.objectId);
         }
     }
 }

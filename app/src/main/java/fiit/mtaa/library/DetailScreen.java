@@ -30,17 +30,25 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
+import io.socket.client.Ack;
+import io.socket.client.IO;
+import io.socket.client.Socket;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class DetailScreen extends AppCompatActivity implements View.OnClickListener {
     private EditText author, title ,literaryForm, year, publisher, paperback, language, price, isbn;
@@ -52,6 +60,9 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
     private Bitmap bitmap;
     private ProgressDialog pDialog;
     private int RequestCode = 100;
+
+    private Socket socket;
+    private JSONObject returnedJson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +97,7 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
 
                                 if(checkConnection() == 0) {
                                     Intent intent = new Intent();
-                                    intent.putExtra("Book", book);
+                                    intent.putExtra("id", objectId);
                                     setResult(RESULT_OK, intent);
                                     finish();
                                 }
@@ -130,108 +141,91 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        new HttpGetBook().execute("");
+        new getBookSocket().execute("");
     }
 
-    public class HttpGetBook extends AsyncTask<String, Integer, String> {
+    public class getBookSocket extends AsyncTask<String, Integer, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(DetailScreen.this);
-            pDialog.setMessage("Loading Content ...");
-            pDialog.show();
-
             int ret = checkConnection();
             if(ret == -1)
                 this.cancel(true);
+
+            pDialog = new ProgressDialog(DetailScreen.this);
+            pDialog.setMessage("Loading Content ...");
+            pDialog.show();
         }
 
         @Override
         protected void onCancelled() {
             super.onCancelled();
             pDialog.dismiss();
-            new AlertDialog.Builder(DetailScreen.this)
-                    .setCancelable(false)
-                    .setTitle("Error")
-                    .setMessage("Check your internet connection and try again after while!")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                            finish();
-                        }
-                    }).show();
+            showDialog("Check your internet connection and try again after while!");
         }
 
         @Override
         protected String doInBackground(String... params) {
-            OkHttpClient client = new OkHttpClient();
-            StringBuilder sb = new StringBuilder();
-            sb.append("https://api.backendless.com/v1/data/Books");   //base url
-            sb.append("/");                                          //lomka
-            sb.append(objectId);                                     //ID knihy ktoru chcem
-            String url = sb.toString();
-
             if(!this.isCancelled()) {
+                IO.Options opts = new IO.Options();
+                opts.secure = false;
+                opts.port = 1341;
+                opts.reconnection = true;
+                opts.forceNew = true;
+                opts.timeout = 5000;
 
-                Request request = new Request.Builder()
-                        .url(url)
-                        .header("application-id", "36E0E8DE-E56C-9A69-FFE7-9CE128693F00")
-                        .addHeader("secret-key", "B1E5E7AC-907F-5A89-FFBB-AC7482E0E600")
-                        .build();
-
-                Response response = null;
                 try {
-                    response = client.newCall(request).execute();
-                } catch (IOException e) {
+                    socket = IO.socket("http://sandbox.touch4it.com:1341/?__sails_io_sdk_version=0.12.1", opts);
+                    socket.connect();
+                } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
 
-                if(response != null) {
-                    try {
-                        switch (response.code()) {
-                            case 200: {
-                                return response.body().string();
-                            }
+                JSONObject js = new JSONObject();
+                try {
+                    js.put("url", "/data/Library1/" + objectId);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-                            case 204: {
-                                DetailScreen.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        showDialog("No content to show!");
-                                    }
-                                });
-                                return "";
-                            }
 
-                            case 400: {
+
+                socket.emit("get", js, new Ack() {
+                    @Override
+                    public void call(Object... args) {
+                        returnedJson = (JSONObject) args[0];
+
+                        try {
+                            if (returnedJson.getInt("statusCode") == 200) {
+                            } else if (returnedJson.getInt("statusCode") == 400) {
                                 DetailScreen.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         showDialog("Bad request syntax!");
                                     }
                                 });
-                                return "";
-                            }
-
-                            case 404: {
+                            } else if (returnedJson.getInt("statusCode") == 404) {
+                                DetailScreen.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            showDialog("Not Found!");
+                                        }
+                                });
+                            } else if (returnedJson.getInt("statusCode") == 500) {
                                 DetailScreen.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        showDialog("Requested book not found!");
+                                        showDialog("Server error!");
                                     }
                                 });
-                                return "";
                             }
-                        };
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
                     }
-                }
-                else {
-                    this.cancel(true);
-                }
+                });
+
+
             }
 
             return "";
@@ -240,9 +234,20 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            pDialog.dismiss();
 
-            processReply(result);
+            if(result != null) {
+                pDialog.dismiss();
+
+                try {
+                    if (returnedJson.getInt("statusCode") == 200) {
+                        String data = returnedJson.getJSONObject("body").get("data").toString();
+
+                        processReply(data);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -260,9 +265,11 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_goback:
+                Intent intent = new Intent();
+                setResult(RESULT_CANCELED, intent);
                 finish();
-                break;
 
+                break;
 
             default:
                 break;
