@@ -56,6 +56,7 @@ public class NewBook extends AppCompatActivity {
         paperback = (EditText) findViewById(R.id.paperback);
         price = (EditText) findViewById(R.id.price);
         isbn = (EditText) findViewById(R.id.isbn);
+        imageUrl = (EditText) findViewById(R.id.imageURL);
 
         author = (Spinner) findViewById(R.id.author);
         literaryForm = (Spinner) findViewById(R.id.literaryForm);
@@ -202,7 +203,9 @@ public class NewBook extends AppCompatActivity {
 
         sb.append("      \"language\": " + selectedLanguage.getValue() + ",");
 
-        sb.append("      \"literaryForm\": " + selectedLiteraryForm.getValue());
+        sb.append("      \"literaryForm\": " + selectedLiteraryForm.getValue() + ",");
+
+        sb.append("      \"picture\": " + imageUrl.getText().toString());
 
         sb.append("}");
 
