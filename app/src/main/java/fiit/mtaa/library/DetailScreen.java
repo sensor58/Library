@@ -234,10 +234,7 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 });
-
-
             }
-
             return "";
         }
 
@@ -266,7 +263,7 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.btn_goback:
                 Intent intent = new Intent();
-                setResult(RESULT_CANCELED, intent);
+                setResult(666, intent);
                 finish();
 
                 break;
@@ -345,6 +342,7 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
         protected void onPostExecute(Bitmap img) {
 
             if(img != null){
+                image.setClickable(true);
                 image.setImageBitmap(img);
                 pDialog.dismiss();
 

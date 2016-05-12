@@ -108,7 +108,7 @@ public class OverviewScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(OverviewScreen.this, NewBook.class);
-                startActivityForResult(intent, 666);
+                startActivityForResult(intent, RequestCode);
                // startActivity(intent);
             }
         });
@@ -124,7 +124,7 @@ public class OverviewScreen extends AppCompatActivity {
         if(requestCode == RequestCode && resultCode == RESULT_OK){
             deleteBook(data.getExtras().getString("id"));
         }
-        if(requestCode == 666 && resultCode == 666){
+        if(requestCode == RequestCode && resultCode == 666){
             if(checkConnection() == 0) {
                 Intent intent = getIntent();
                 finish();
