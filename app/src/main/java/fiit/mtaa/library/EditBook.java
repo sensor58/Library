@@ -26,13 +26,20 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.socket.client.Ack;
+import io.socket.client.IO;
+import io.socket.client.Socket;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -49,6 +56,8 @@ public class EditBook extends AppCompatActivity implements View.OnClickListener 
 
     private Bitmap bitmap;
 
+    private Socket socket;
+
     private ProgressDialog pDialog;
     private String objectId;
 
@@ -57,6 +66,8 @@ public class EditBook extends AppCompatActivity implements View.OnClickListener 
     private Book.LiteraryForm selectedLiteraryForm;
 
     private String json;
+
+    private String madeJson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,11 +194,13 @@ public class EditBook extends AppCompatActivity implements View.OnClickListener 
 
         sb.append("      \"language\": " + selectedLanguage.getValue() + ",");
 
-        sb.append("      \"literaryForm\": " + selectedLiteraryForm.getValue());
+        sb.append("      \"literaryForm\": " + selectedLiteraryForm.getValue() + ",");
+
+        sb.append("      \"picture\": \"" + imageUrl.getText().toString() + "\"");
 
         sb.append("}");
 
-        json = sb.toString();
+        madeJson = sb.toString();
 
         return true;
     }
@@ -310,78 +323,36 @@ public class EditBook extends AppCompatActivity implements View.OnClickListener 
 
         @Override
         protected String doInBackground(String... params) {
-            OkHttpClient client = new OkHttpClient();
-            StringBuilder sb = new StringBuilder();
-            sb.append("https://api.backendless.com/v1/data/Books");   //base url
-            sb.append("/");                                          //lomka
-            sb.append(objectId);                                     //ID knihy pre edit
-            String url = sb.toString();
-
             if(!this.isCancelled()) {
+                IO.Options opts = new IO.Options();
+                opts.secure = false;
+                opts.port = 1341;
+                opts.reconnection = true;
+                opts.forceNew = true;
+                opts.timeout = 5000;
 
-                RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
-
-                Request request = new Request.Builder()
-                        .url(url)
-                        .header("application-id", "36E0E8DE-E56C-9A69-FFE7-9CE128693F00")
-                        .addHeader("secret-key", "B1E5E7AC-907F-5A89-FFBB-AC7482E0E600")
-                        .put(requestBody)
-                        .build();
-
-                Response response = null;
                 try {
-                    response = client.newCall(request).execute();
-                } catch (IOException e) {
+                    socket = IO.socket("http://sandbox.touch4it.com:1341/?__sails_io_sdk_version=0.12.1", opts);
+                    socket.connect();
+                } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
 
-                if(response != null) {
-                    try {
-                        switch (response.code()) {
-                            case 200: {
-                                return response.body().string();
-                            }
+                String json = madeJson;
 
-                            case 204: {
-                                EditBook.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        showDialog("No content to show!");
-                                    }
-                                });
-                                return "";
-                            }
-
-                            case 400: {
-                                EditBook.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        showDialog("Bad request syntax!");
-                                    }
-                                });
-                                return "";
-                            }
-
-                            case 404: {
-                                EditBook.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        showDialog("Requested book not found!");
-                                    }
-                                });
-                                return "";
-                            }
-                        };
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                JSONObject js = new JSONObject();
+                try {
+                    js.put("url", "/data/Library1/" + objectId);
+                    js.put("data", new JSONObject().put("data", new JSONObject(json)));
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-                else {
-                    this.cancel(true);
-                }
+
+                socket.emit("put", js, new Ack() {
+                    @Override
+                    public void call(Object... args) {}
+                });
             }
-
             return "";
         }
 
@@ -391,7 +362,7 @@ public class EditBook extends AppCompatActivity implements View.OnClickListener 
             pDialog.dismiss();
 
             Intent intent = new Intent();
-            intent.putExtra("Json", result);
+            intent.putExtra("Json", madeJson);
             setResult(RESULT_OK, intent);
             finish();
         }

@@ -108,7 +108,8 @@ public class OverviewScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(OverviewScreen.this, NewBook.class);
-                startActivity(intent);
+                startActivityForResult(intent, 666);
+               // startActivity(intent);
             }
         });
 
@@ -122,6 +123,16 @@ public class OverviewScreen extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == RequestCode && resultCode == RESULT_OK){
             deleteBook(data.getExtras().getString("id"));
+        }
+        if(requestCode == 666 && resultCode == 666){
+            if(checkConnection() == 0) {
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+            }
+            else {
+                showDialog("Check your internet connection and try again after while!");
+            }
         }
     }
 

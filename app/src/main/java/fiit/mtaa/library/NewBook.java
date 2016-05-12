@@ -3,6 +3,7 @@ package fiit.mtaa.library;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -76,6 +77,8 @@ public class NewBook extends AppCompatActivity {
                 if(checkConnection() == 0) {
                     if (checkInputFields() && tryMakeJson()) {
                         new PostBook().execute("");
+                        Intent intent = new Intent();
+                        setResult(666, intent);
                         finish();
                     }
                 }
@@ -205,7 +208,7 @@ public class NewBook extends AppCompatActivity {
 
         sb.append("      \"literaryForm\": " + selectedLiteraryForm.getValue() + ",");
 
-        sb.append("      \"picture\": " + imageUrl.getText().toString());
+        sb.append("      \"picture\": \"" + imageUrl.getText().toString() + "\"");
 
         sb.append("}");
 

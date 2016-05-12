@@ -197,6 +197,16 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
 
                         try {
                             if (returnedJson.getInt("statusCode") == 200) {
+                                final String data = returnedJson.getJSONObject("body").get("data").toString();
+
+                                DetailScreen.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        processReply(data);
+                                    }
+                                });
+
+
                             } else if (returnedJson.getInt("statusCode") == 400) {
                                 DetailScreen.this.runOnUiThread(new Runnable() {
                                     @Override
@@ -237,16 +247,6 @@ public class DetailScreen extends AppCompatActivity implements View.OnClickListe
 
             if(result != null) {
                 pDialog.dismiss();
-
-                try {
-                    if (returnedJson.getInt("statusCode") == 200) {
-                        String data = returnedJson.getJSONObject("body").get("data").toString();
-
-                        processReply(data);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
             }
         }
     }
